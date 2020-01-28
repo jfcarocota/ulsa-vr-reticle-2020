@@ -22,6 +22,12 @@ public class VRReticle : MonoBehaviour
 
     RaycastHit hit;
 
+    [SerializeField]
+    Color colorNormal;
+    [SerializeField]
+    Color colorHit;
+    Renderer renderTarget;
+
     void Start() 
     {
         reticle.localPosition = recticleStartPoint.localPosition;     
@@ -38,15 +44,23 @@ public class VRReticle : MonoBehaviour
                 reticle.position = hit.point;
                 reticle.localScale = initSize * hit.distance;
                 reticle.rotation = Quaternion.LookRotation(hit.normal);
+
+                renderTarget = hit.collider.GetComponent<Renderer>();
+                renderTarget.material.SetColor("_Albedo", colorHit);
             }
         }
         else
         {
+            if(renderTarget)
+            {
+                renderTarget.material.SetColor("_Albedo", colorNormal);
+                renderTarget = null;
+            }
+
             reticle.parent = recticleStartPoint;
             reticle.localRotation = Quaternion.identity;
             reticle.localScale = initSize;
             reticle.localPosition = Vector3.zero;
-
         }
     }
 
